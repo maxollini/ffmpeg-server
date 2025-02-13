@@ -2,6 +2,7 @@ const express = require('express');
 const { exec } = require('child_process');
 
 const app = express();
+app.use(express.static(__dirname));
 app.use(express.json());
 
 app.post('/run-ffmpeg', (req, res) => {
