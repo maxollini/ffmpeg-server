@@ -22,7 +22,7 @@ app.post('/generate-image', async (req, res) => {
 
     const outputImage = path.join(publicPath, `output_${Date.now()}.jpg`);
 
-    const command = `ffmpeg -i "${videoUrl}" -vf "select='not(mod(n\\,10))',scale=-1:300,tile=1x10" -frames:v 1 ${outputImage}`;
+    const command = `ffmpeg -i "${videoUrl}" -vf "select='not(mod(n\\,10))',scale=-1:300,tile=1x10" -frames:v 1 -update 1 -y "${outputImage}"`;
 
     exec(command, (error, stdout, stderr) => {
         if (error) return res.status(500).send(stderr);
