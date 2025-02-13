@@ -39,7 +39,7 @@ app.post('/generate-image', async (req, res) => {
 
             // FFmpeg command to extract frames and stack horizontally with offset
             const filters = timestamps.map((t, i) => `eq(n\\,${t})`).join("+");
-            const command = `ffmpeg -i "${videoUrl}" -vf "select='${timestamps.map(t => `gte(t,${t})`).join('+')}',scale=${width}:-1,tile=${timestamps.length}x1" -frames:v 1 -y "${outputImage}"`;
+            const command = `ffmpeg -i "${videoUrl}" -vf "select='${timestamps.map((t, i) => `not(mod(n\\,${Math.floor(t)}))`).join('+')}',scale=${width}:-1,tile=${timestamps.length}x1" -frames:v 1 -y "${outputImage}"`;
 
             exec(command, (error, stdout, stderr) => {
                 if (error) return res.status(500).send(stderr);
