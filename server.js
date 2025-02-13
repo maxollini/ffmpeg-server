@@ -8,7 +8,7 @@ const fs = require('fs');
 if (!fs.existsSync(publicPath)) {
     fs.mkdirSync(publicPath, { recursive: true });
 }
-app.use(express.static(publicPath));
+app.use('/images', express.static(publicPath));
 app.use(express.json());
 
 app.post('/run-ffmpeg', (req, res) => {
