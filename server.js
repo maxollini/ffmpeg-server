@@ -23,13 +23,15 @@ app.post('/generate-image', async (req, res) => {
         duration = Math.floor(parseFloat(duration)); // Convert duration to seconds
         if (duration < 2) return res.status(400).send('Video too short');
 
-        // Generate timestamps based on video duration
+        // Ensure the first and last frames are at 1 and (duration - 1)
         let timestamps = [1];
-        let steps = Math.max(1, Math.floor(duration / 5));
-        for (let i = 1; i < 5; i++) {
+        let steps = Math.max(1, Math.floor((duration - 1) / 5));
+        for (let i = 1; i < 4; i++) {
             let ts = Math.min(1 + i * steps, duration - 1);
             if (!timestamps.includes(ts)) timestamps.push(ts);
         }
+
+        timestamps.push(duration - 1);  // Add the last frame at (duration - 1)
 
         // Get video width for horizontal offset
         exec(`ffprobe -i "${videoUrl}" -show_entries stream=width -v quiet -of csv="p=0"`, (error, width, stderr) => {
@@ -38,8 +40,8 @@ app.post('/generate-image', async (req, res) => {
             width = parseInt(width); // Video width in pixels
 
             // FFmpeg command to extract frames and stack horizontally with offset
-            const filters = timestamps.map((t, i) => `eq(n\\,${t})`).join("+");
-            const command = `ffmpeg -i "${videoUrl}" -vf "select='${timestamps.map(t => `eq(t,${t})`).join('+')}',scale=${width}:-1,tile=${timestamps.length}x1" -frames:v 1 -y "${outputImage}"`;
+            const filters = timestamps.map((t) => `eq(t,${t})`).join("+");
+            const command = `ffmpeg -i "${videoUrl}" -vf "select='${filters}',scale=${width}:-1,tile=${timestamps.length}x1" -frames:v 1 -y "${outputImage}"`;
 
             exec(command, (error, stdout, stderr) => {
                 if (error) return res.status(500).send(stderr);
