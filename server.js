@@ -1,6 +1,5 @@
 const express = require('express');
-const app = express();
-const express = require('express');
+const app = express();  // Only declare express once here
 const { exec } = require('child_process');
 const path = require('path');
 const publicPath = path.join(__dirname, 'public');
