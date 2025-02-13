@@ -2,7 +2,9 @@ const express = require('express');
 const { exec } = require('child_process');
 
 const app = express();
-app.use(express.static(__dirname));
+const path = require('path');
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 app.use(express.json());
 
 app.post('/run-ffmpeg', (req, res) => {
@@ -18,7 +20,7 @@ app.post('/generate-image', async (req, res) => {
     const videoUrl = req.body.videoUrl;
     if (!videoUrl) return res.status(400).send('Missing video URL');
 
-    const outputImage = `output_${Date.now()}.jpg`;
+    const outputImage = path.join(publicPath, `output_${Date.now()}.jpg`);
 
     const command = `ffmpeg -i "${videoUrl}" -vf "select='not(mod(n\\,10))',scale=-1:300,tile=1x10" -frames:v 1 ${outputImage}`;
 
