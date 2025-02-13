@@ -4,6 +4,10 @@ const { exec } = require('child_process');
 const app = express();
 const path = require('path');
 const publicPath = path.join(__dirname, 'public');
+const fs = require('fs');
+if (!fs.existsSync(publicPath)) {
+    fs.mkdirSync(publicPath, { recursive: true });
+}
 app.use(express.static(publicPath));
 app.use(express.json());
 
