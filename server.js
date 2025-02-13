@@ -30,7 +30,7 @@ app.post('/generate-image', async (req, res) => {
 
     exec(command, (error, stdout, stderr) => {
         if (error) return res.status(500).send(stderr);
-        res.json({ imageUrl: `https://ffmpeg-server-t9j2.onrender.com/${outputImage}` });
+        res.json({ imageUrl: `https://ffmpeg-server-t9j2.onrender.com/public/${path.basename(outputImage)}` });
     });
 });
 const PORT = process.env.PORT || 8080;
